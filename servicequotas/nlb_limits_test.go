@@ -1,6 +1,7 @@
 package servicequotas
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -19,7 +20,7 @@ func TestNLBsPerRegionUsageWithError(t *testing.T) {
 	}
 
 	check := NLBsPerRegionUsageCheck{mockClient}
-	usage, err := check.Usage()
+	usage, err := check.Usage(context.Background())
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -71,7 +72,7 @@ func TestNLBsPerRegionUsage(t *testing.T) {
 			}
 
 			check := NLBsPerRegionUsageCheck{mockClient}
-			usage, err := check.Usage()
+			usage, err := check.Usage(context.Background())
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)
