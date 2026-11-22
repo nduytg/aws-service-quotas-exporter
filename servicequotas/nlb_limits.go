@@ -94,7 +94,7 @@ type IPsPerNLBAvailabilityZoneUsageCheck struct {
 // zone add up to its number of addresses there. The ResourceName is the
 // load balancer's ID as in its ARN and its CloudWatch LoadBalancer
 // dimension ("net/<name>/<id>").
-func (c *IPsPerNLBAvailabilityZoneUsageCheck) Usage() ([]QuotaUsage, error) {
+func (c *IPsPerNLBAvailabilityZoneUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
 	quotaUsages := []QuotaUsage{}
 
 	params := &ec2.DescribeNetworkInterfacesInput{
@@ -107,7 +107,7 @@ func (c *IPsPerNLBAvailabilityZoneUsageCheck) Usage() ([]QuotaUsage, error) {
 	}
 	paginator := ec2.NewDescribeNetworkInterfacesPaginator(c.client, params)
 	for paginator.HasMorePages() {
-		page, err := paginator.NextPage(context.TODO())
+		page, err := paginator.NextPage(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("%w: %s", ErrFailedToGetUsage, err)
 		}

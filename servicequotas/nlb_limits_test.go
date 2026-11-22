@@ -114,7 +114,7 @@ func TestIPsPerNLBAvailabilityZoneUsageWithError(t *testing.T) {
 	}
 
 	check := IPsPerNLBAvailabilityZoneUsageCheck{mockClient}
-	usage, err := check.Usage()
+	usage, err := check.Usage(context.Background())
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -173,7 +173,7 @@ func TestIPsPerNLBAvailabilityZoneUsage(t *testing.T) {
 			}
 
 			check := IPsPerNLBAvailabilityZoneUsageCheck{mockClient}
-			usage, err := check.Usage()
+			usage, err := check.Usage(context.Background())
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)
