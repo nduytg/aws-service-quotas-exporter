@@ -53,7 +53,7 @@ func main() {
 		EnableIAMRolesPerAccountCheck:    opts.EnableIAMRolesPerAccount,
 		EnableIAMPoliciesPerAccountCheck: opts.EnableIAMPoliciesPerAccount,
 	}
-	quotasExporter, err := serviceexporter.NewServiceQuotasExporter(context.Background(), opts.Region, opts.Profile, opts.RefreshPeriod, opts.RefreshTimeout, opts.IncludeAWSTags, quotasOpts)
+	quotasExporter, err := serviceexporter.NewServiceQuotasExporterWithContext(context.Background(), opts.Region, opts.Profile, opts.RefreshPeriod, opts.RefreshTimeout, opts.IncludeAWSTags, quotasOpts)
 	if err != nil {
 		log.Fatalf("Failed to create exporter: %s", err)
 	}

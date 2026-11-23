@@ -28,7 +28,12 @@ type ASGUsageCheck struct {
 // Usage returns usage per auto scaling group - the maximum number of
 // instances per ASG and the current number of "running" instances per
 // ASG.
-func (c *ASGUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *ASGUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *ASGUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	quotaUsages := []QuotaUsage{}
 
 	params := &autoscaling.DescribeAutoScalingGroupsInput{}

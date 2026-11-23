@@ -18,7 +18,7 @@ func TestRulesPerSecurityGroupUsageWithError(t *testing.T) {
 	}
 
 	check := RulesPerSecurityGroupUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -122,7 +122,7 @@ func TestRulesPerSecurityGroupUsage(t *testing.T) {
 			}
 
 			check := RulesPerSecurityGroupUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)
@@ -137,7 +137,7 @@ func TestSecurityGroupsPerENIUsageWithError(t *testing.T) {
 	}
 
 	check := SecurityGroupsPerENIUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -193,7 +193,7 @@ func TestSecurityGroupsPerENIUsage(t *testing.T) {
 			}
 
 			check := SecurityGroupsPerENIUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)
@@ -208,7 +208,7 @@ func TestSecurityGroupsPerRegionUsageWithError(t *testing.T) {
 	}
 
 	check := SecurityGroupsPerRegionUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -262,7 +262,7 @@ func TestSecurityGroupsPerRegionUsage(t *testing.T) {
 			}
 
 			check := SecurityGroupsPerRegionUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)
@@ -371,7 +371,7 @@ func TestAvailableIpsPerSubnetUsageWithError(t *testing.T) {
 	}
 
 	check := AvailableIpsPerSubnetUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -401,7 +401,7 @@ func TestAvailableIpsPerSubnetUsageWithInvalidCidrConversion(t *testing.T) {
 				},
 			}
 			check := AvailableIpsPerSubnetUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.Error(t, err)
 			assert.True(t, errors.Is(err, ErrFailedToConvertCidr))
@@ -425,7 +425,7 @@ func TestAvailableIpsPerSubnetUsageSkipsIpv6Native(t *testing.T) {
 	}
 	check := AvailableIpsPerSubnetUsageCheck{mockClient}
 
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.NoError(t, err)
 	assert.Equal(t, []QuotaUsage{{
@@ -538,7 +538,7 @@ func TestAvailableIpsPerSubnetUsage(t *testing.T) {
 			}
 
 			check := AvailableIpsPerSubnetUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)

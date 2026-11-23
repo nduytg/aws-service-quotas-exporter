@@ -43,7 +43,7 @@ type UsageCheckMock struct {
 	usages []QuotaUsage
 }
 
-func (m *UsageCheckMock) Usage(_ context.Context) ([]QuotaUsage, error) {
+func (m *UsageCheckMock) Usage() ([]QuotaUsage, error) {
 	return m.usages, m.err
 }
 
@@ -54,7 +54,7 @@ func TestQuotasAndUsageWithError(t *testing.T) {
 	}
 
 	serviceQuotas := ServiceQuotas{quotasService: mockClient, services: []string{"ec2", "vpc"}}
-	quotasAndUsage, err := serviceQuotas.QuotasAndUsage(context.Background())
+	quotasAndUsage, err := serviceQuotas.QuotasAndUsage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToListQuotas))
@@ -73,7 +73,7 @@ func TestQuotasAndUsagePropagatesContextDeadline(t *testing.T) {
 	}
 	done := make(chan error, 1)
 	go func() {
-		_, err := serviceQuotas.QuotasAndUsage(ctx)
+		_, err := serviceQuotas.QuotasAndUsageContext(ctx)
 		done <- err
 	}()
 
@@ -117,7 +117,7 @@ func TestQuotasAndUsageWithUsageError(t *testing.T) {
 		},
 		services: []string{"ec2", "vpc"},
 	}
-	quotasAndUsage, err := serviceQuotas.QuotasAndUsage(context.Background())
+	quotasAndUsage, err := serviceQuotas.QuotasAndUsage()
 
 	assert.True(t, errors.Is(err, expectedErr))
 	var checkErr *CheckError
@@ -132,7 +132,7 @@ func TestQuotasAndUsageWithOtherUsageCheckError(t *testing.T) {
 		isAwsChina:       true,
 		otherUsageChecks: []UsageCheck{&UsageCheckMock{err: expectedErr}},
 	}
-	quotasAndUsage, err := serviceQuotas.QuotasAndUsage(context.Background())
+	quotasAndUsage, err := serviceQuotas.QuotasAndUsage()
 
 	assert.True(t, errors.Is(err, expectedErr))
 	var checkErr *CheckError
@@ -196,7 +196,7 @@ func TestQuotasAndUsage(t *testing.T) {
 		},
 		services: []string{"ec2", "vpc"},
 	}
-	actualQuotasAndUsage, err := serviceQuotas.QuotasAndUsage(context.Background())
+	actualQuotasAndUsage, err := serviceQuotas.QuotasAndUsage()
 
 	expectedQuotasAndUsage := []QuotaUsage{
 		{
@@ -283,7 +283,7 @@ func TestQuotasAndUsageChina(t *testing.T) {
 			},
 		},
 	}
-	actualQuotasAndUsage, err := serviceQuotas.QuotasAndUsage(context.Background())
+	actualQuotasAndUsage, err := serviceQuotas.QuotasAndUsage()
 
 	// Service quotas are currently not supported in AWS china
 	expectedQuotasAndUsage := []QuotaUsage{
@@ -335,7 +335,7 @@ func TestQuotaUsageIdentifier(t *testing.T) {
 }
 
 func TestNewServiceQuotasWithInvalidRegion(t *testing.T) {
-	svcQuotas, err := NewServiceQuotas(context.Background(), "asdasd", "someprofile")
+	svcQuotas, err := NewServiceQuotas("asdasd", "someprofile")
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrInvalidRegion))
@@ -405,7 +405,7 @@ func TestQuotasForGlobalServiceRoutesToGlobalClient(t *testing.T) {
 		},
 		services: []string{"iam"},
 	}
-	actual, err := serviceQuotas.QuotasAndUsage(context.Background())
+	actual, err := serviceQuotas.QuotasAndUsage()
 
 	assert.NoError(t, err)
 	assert.Equal(t, 0, regionalClient.timesCalled, "regional client must not be called for global services")

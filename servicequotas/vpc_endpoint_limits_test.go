@@ -1,7 +1,6 @@
 package servicequotas
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -18,7 +17,7 @@ func TestInterfaceVpcEndpointsPerVpcUsageWithError(t *testing.T) {
 	}
 
 	check := InterfaceVpcEndpointsPerVpcUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -116,7 +115,7 @@ func TestInterfaceVpcEndpointsPerVpcUsage(t *testing.T) {
 			}
 
 			check := InterfaceVpcEndpointsPerVpcUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.NoError(t, err)
 
@@ -164,7 +163,7 @@ func TestResourceVpcEndpointsPerVpcUsage(t *testing.T) {
 	}
 
 	check := ResourceVpcEndpointsPerVpcUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.NoError(t, err)
 	assert.Equal(t, []QuotaUsage{
@@ -195,7 +194,7 @@ func TestServiceNetworkVpcEndpointsPerVpcUsage(t *testing.T) {
 	}
 
 	check := ServiceNetworkVpcEndpointsPerVpcUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.NoError(t, err)
 	assert.Equal(t, []QuotaUsage{
@@ -223,19 +222,19 @@ func TestVpcEndpointChecksWithNoMatchingType(t *testing.T) {
 
 	// Interface check should return no usages for Gateway-only endpoints
 	interfaceCheck := InterfaceVpcEndpointsPerVpcUsageCheck{mockClient}
-	usage, err := interfaceCheck.Usage(context.Background())
+	usage, err := interfaceCheck.Usage()
 	assert.NoError(t, err)
 	assert.Nil(t, usage)
 
 	// Resource check should return no usages for Gateway-only endpoints
 	resourceCheck := ResourceVpcEndpointsPerVpcUsageCheck{mockClient}
-	usage, err = resourceCheck.Usage(context.Background())
+	usage, err = resourceCheck.Usage()
 	assert.NoError(t, err)
 	assert.Nil(t, usage)
 
 	// ServiceNetwork check should return no usages for Gateway-only endpoints
 	snCheck := ServiceNetworkVpcEndpointsPerVpcUsageCheck{mockClient}
-	usage, err = snCheck.Usage(context.Background())
+	usage, err = snCheck.Usage()
 	assert.NoError(t, err)
 	assert.Nil(t, usage)
 }

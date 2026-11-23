@@ -21,7 +21,12 @@ type VpcsPerRegionUsageCheck struct {
 }
 
 // Usage returns the number of VPCs in the region.
-func (c *VpcsPerRegionUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *VpcsPerRegionUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *VpcsPerRegionUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	numVpcs := 0
 
 	params := &ec2.DescribeVpcsInput{}
@@ -50,7 +55,12 @@ type EIPsPerRegionUsageCheck struct {
 }
 
 // Usage returns the number of EC2-VPC Elastic IPs allocated in the region.
-func (c *EIPsPerRegionUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *EIPsPerRegionUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *EIPsPerRegionUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	output, err := c.client.DescribeAddresses(ctx, &ec2.DescribeAddressesInput{})
 	if err != nil {
 		return nil, fmt.Errorf("%w: %s", ErrFailedToGetUsage, err)

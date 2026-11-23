@@ -27,7 +27,12 @@ type LambdaConcurrentExecutionsLimitCheck struct {
 
 // Usage returns the usage and quota for the lambda concurrent executions and
 // lambda code size unzipped limits
-func (c *LambdaConcurrentExecutionsLimitCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *LambdaConcurrentExecutionsLimitCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *LambdaConcurrentExecutionsLimitCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	param := &lambda.GetAccountSettingsInput{}
 	var usages []QuotaUsage
 

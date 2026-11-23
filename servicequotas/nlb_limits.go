@@ -49,7 +49,12 @@ type NLBsPerRegionUsageCheck struct {
 }
 
 // Usage returns the number of Network Load Balancers in the region.
-func (c *NLBsPerRegionUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *NLBsPerRegionUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *NLBsPerRegionUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	numNLBs := 0
 
 	params := &elbv2.DescribeLoadBalancersInput{}
@@ -94,7 +99,12 @@ type IPsPerNLBAvailabilityZoneUsageCheck struct {
 // zone add up to its number of addresses there. The ResourceName is the
 // load balancer's ID as in its ARN and its CloudWatch LoadBalancer
 // dimension ("net/<name>/<id>").
-func (c *IPsPerNLBAvailabilityZoneUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *IPsPerNLBAvailabilityZoneUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *IPsPerNLBAvailabilityZoneUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	quotaUsages := []QuotaUsage{}
 
 	params := &ec2.DescribeNetworkInterfacesInput{

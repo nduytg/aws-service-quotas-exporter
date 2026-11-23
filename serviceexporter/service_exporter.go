@@ -61,8 +61,14 @@ type ServiceQuotasExporter struct {
 	refreshErrors      map[string]float64
 }
 
-// NewServiceQuotasExporter creates a new ServiceQuotasExporter
-func NewServiceQuotasExporter(ctx context.Context, region, profile string, refreshPeriod int, refreshTimeout time.Duration, includedAWSTags []string, quotasOpts ...servicequotas.QuotasOptions) (*ServiceQuotasExporter, error) {
+// NewServiceQuotasExporter creates a new ServiceQuotasExporter.
+// It preserves the original API and leaves the refresh deadline disabled.
+func NewServiceQuotasExporter(region, profile string, refreshPeriod int, includedAWSTags []string, quotasOpts ...servicequotas.QuotasOptions) (*ServiceQuotasExporter, error) {
+	return NewServiceQuotasExporterWithContext(context.Background(), region, profile, refreshPeriod, 0, includedAWSTags, quotasOpts...)
+}
+
+// NewServiceQuotasExporterWithContext creates an exporter with caller cancellation and a refresh deadline.
+func NewServiceQuotasExporterWithContext(ctx context.Context, region, profile string, refreshPeriod int, refreshTimeout time.Duration, includedAWSTags []string, quotasOpts ...servicequotas.QuotasOptions) (*ServiceQuotasExporter, error) {
 	if refreshPeriod <= 0 {
 		return nil, fmt.Errorf("refresh period must be positive, got %d", refreshPeriod)
 	}
@@ -70,7 +76,7 @@ func NewServiceQuotasExporter(ctx context.Context, region, profile string, refre
 		return nil, fmt.Errorf("refresh timeout must not be negative, got %s", refreshTimeout)
 	}
 
-	quotasClient, err := servicequotas.NewServiceQuotas(ctx, region, profile, quotasOpts...)
+	quotasClient, err := servicequotas.NewServiceQuotasWithContext(ctx, region, profile, quotasOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,6 +96,13 @@ func NewServiceQuotasExporter(ctx context.Context, region, profile string, refre
 	go exporter.refreshMetrics(ctx)
 
 	return exporter, nil
+}
+
+func quotasAndUsage(ctx context.Context, client servicequotas.QuotasInterface) ([]servicequotas.QuotaUsage, error) {
+	if contextClient, ok := client.(servicequotas.ContextQuotasInterface); ok {
+		return contextClient.QuotasAndUsageContext(ctx)
+	}
+	return client.QuotasAndUsage()
 }
 
 func (e *ServiceQuotasExporter) refreshMetrics(ctx context.Context) {
@@ -121,7 +134,7 @@ func (e *ServiceQuotasExporter) createOrUpdateQuotasAndDescriptions(ctx context.
 		defer cancel()
 	}
 
-	quotas, err := e.quotasClient.QuotasAndUsage(ctx)
+	quotas, err := quotasAndUsage(ctx, e.quotasClient)
 	if err != nil {
 		check := unknownCheck
 		var checkErr *servicequotas.CheckError

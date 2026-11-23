@@ -26,7 +26,7 @@ type ServiceQuotasMock struct {
 	err    error
 }
 
-func (s *ServiceQuotasMock) QuotasAndUsage(_ context.Context) ([]servicequotas.QuotaUsage, error) {
+func (s *ServiceQuotasMock) QuotasAndUsage() ([]servicequotas.QuotaUsage, error) {
 	return s.quotas, s.err
 }
 
@@ -390,7 +390,11 @@ type hangingQuotasClient struct {
 	err error
 }
 
-func (c *hangingQuotasClient) QuotasAndUsage(ctx context.Context) ([]servicequotas.QuotaUsage, error) {
+func (c *hangingQuotasClient) QuotasAndUsage() ([]servicequotas.QuotaUsage, error) {
+	return nil, errors.New("legacy QuotasAndUsage called")
+}
+
+func (c *hangingQuotasClient) QuotasAndUsageContext(ctx context.Context) ([]servicequotas.QuotaUsage, error) {
 	<-ctx.Done()
 	c.err = ctx.Err()
 	return nil, c.err
@@ -445,7 +449,13 @@ func TestRefreshLoopStopsOnContextCancellation(t *testing.T) {
 }
 
 func TestNewServiceQuotasExporterRejectsNegativeTimeout(t *testing.T) {
-	exporter, err := NewServiceQuotasExporter(context.Background(), "us-east-1", "", 360, -time.Second, nil)
+	exporter, err := NewServiceQuotasExporterWithContext(context.Background(), "us-east-1", "", 360, -time.Second, nil)
 	assert.Nil(t, exporter)
 	assert.EqualError(t, err, "refresh timeout must not be negative, got -1s")
+}
+
+func TestNewServiceQuotasExporterLegacySignature(t *testing.T) {
+	exporter, err := NewServiceQuotasExporter("invalid", "", 360, nil)
+	assert.Nil(t, exporter)
+	assert.ErrorIs(t, err, servicequotas.ErrInvalidRegion)
 }

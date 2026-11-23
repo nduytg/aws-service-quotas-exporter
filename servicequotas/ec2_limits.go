@@ -57,7 +57,12 @@ type RulesPerSecurityGroupUsageCheck struct {
 
 // Usage returns the usage for each security group ID with the usage
 // value being the sum of their inbound and outbound rules or an error
-func (c *RulesPerSecurityGroupUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *RulesPerSecurityGroupUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *RulesPerSecurityGroupUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	quotaUsages := []QuotaUsage{}
 
 	params := &ec2.DescribeSecurityGroupsInput{}
@@ -116,7 +121,12 @@ type SecurityGroupsPerENIUsageCheck struct {
 // Usage returns usage for each Elastic Network Interface ID with the
 // usage value being the number of security groups for each ENI or an
 // error
-func (c *SecurityGroupsPerENIUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *SecurityGroupsPerENIUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *SecurityGroupsPerENIUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	quotaUsages := []QuotaUsage{}
 
 	params := &ec2.DescribeNetworkInterfacesInput{}
@@ -150,7 +160,12 @@ type SecurityGroupsPerRegionUsageCheck struct {
 
 // Usage returns usage for security groups per region as the number of
 // all security groups for the region specified with `cfgs` or an error
-func (c *SecurityGroupsPerRegionUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *SecurityGroupsPerRegionUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *SecurityGroupsPerRegionUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	numGroups := 0
 
 	params := &ec2.DescribeSecurityGroupsInput{}
@@ -248,7 +263,12 @@ type StandardSpotInstanceRequestsUsageCheck struct {
 // vCPUs are returned instead of the number of images due to the
 // service quota reporting the number of vCPUs
 // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html
-func (c *StandardSpotInstanceRequestsUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *StandardSpotInstanceRequestsUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *StandardSpotInstanceRequestsUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	cpus, err := standardInstancesCPUs(ctx, c.client, true)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %s", ErrFailedToGetUsage, err)
@@ -275,7 +295,12 @@ type RunningOnDemandStandardInstancesUsageCheck struct {
 // of the number of images due to the service quota reporting the number
 // of vCPUs
 // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-limits.html
-func (c *RunningOnDemandStandardInstancesUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *RunningOnDemandStandardInstancesUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *RunningOnDemandStandardInstancesUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	cpus, err := standardInstancesCPUs(ctx, c.client, false)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %s", ErrFailedToGetUsage, err)
@@ -303,7 +328,12 @@ type AvailableIpsPerSubnetUsageCheck struct {
 // Note that the Description of the resource here is constructed
 // using `availableIPsPerSubnetDesc` defined previously as well as
 // the subnet's CIDR block
-func (c *AvailableIpsPerSubnetUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *AvailableIpsPerSubnetUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *AvailableIpsPerSubnetUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	availabilityInfos := []QuotaUsage{}
 
 	params := &ec2.DescribeSubnetsInput{}

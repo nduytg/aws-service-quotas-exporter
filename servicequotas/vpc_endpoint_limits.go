@@ -57,7 +57,12 @@ type InterfaceVpcEndpointsPerVpcUsageCheck struct {
 }
 
 // Usage returns the usage of Interface + GatewayLoadBalancer VPC endpoints per VPC.
-func (c *InterfaceVpcEndpointsPerVpcUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *InterfaceVpcEndpointsPerVpcUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *InterfaceVpcEndpointsPerVpcUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	counts, err := vpcEndpointsByVpcAndType(ctx, c.client)
 	if err != nil {
 		return nil, err
@@ -87,7 +92,12 @@ type ResourceVpcEndpointsPerVpcUsageCheck struct {
 }
 
 // Usage returns the usage of Resource VPC endpoints per VPC.
-func (c *ResourceVpcEndpointsPerVpcUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *ResourceVpcEndpointsPerVpcUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *ResourceVpcEndpointsPerVpcUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	counts, err := vpcEndpointsByVpcAndType(ctx, c.client)
 	if err != nil {
 		return nil, err
@@ -117,7 +127,12 @@ type ServiceNetworkVpcEndpointsPerVpcUsageCheck struct {
 }
 
 // Usage returns the usage of ServiceNetwork VPC endpoints per VPC.
-func (c *ServiceNetworkVpcEndpointsPerVpcUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *ServiceNetworkVpcEndpointsPerVpcUsageCheck) Usage() ([]QuotaUsage, error) {
+	return c.UsageContext(context.Background())
+}
+
+// UsageContext propagates ctx to AWS requests.
+func (c *ServiceNetworkVpcEndpointsPerVpcUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
 	counts, err := vpcEndpointsByVpcAndType(ctx, c.client)
 	if err != nil {
 		return nil, err

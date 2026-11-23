@@ -1,7 +1,6 @@
 package servicequotas
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -18,7 +17,7 @@ func TestIAMRolesPerAccountUsageWithError(t *testing.T) {
 	}
 
 	check := IAMRolesPerAccountUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -69,7 +68,7 @@ func TestIAMRolesPerAccountUsage(t *testing.T) {
 			}
 
 			check := IAMRolesPerAccountUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)
@@ -84,7 +83,7 @@ func TestIAMPoliciesPerAccountUsageWithError(t *testing.T) {
 	}
 
 	check := IAMPoliciesPerAccountUsageCheck{mockClient}
-	usage, err := check.Usage(context.Background())
+	usage, err := check.Usage()
 
 	assert.Error(t, err)
 	assert.True(t, errors.Is(err, ErrFailedToGetUsage))
@@ -134,7 +133,7 @@ func TestIAMPoliciesPerAccountUsage(t *testing.T) {
 			}
 
 			check := IAMPoliciesPerAccountUsageCheck{mockClient}
-			usage, err := check.Usage(context.Background())
+			usage, err := check.Usage()
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedUsage, usage)

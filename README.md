@@ -223,7 +223,11 @@ type MyUsageCheck struct {
     client awsserviceiface.SERVICEAPI  // eg ec2iface.EC2API
 }
 
-func (c *MyUsageCheck) Usage(ctx context.Context) ([]QuotaUsage, error) {
+func (c *MyUsageCheck) Usage() ([]QuotaUsage, error) {
+    return c.UsageContext(context.Background())
+}
+
+func (c *MyUsageCheck) UsageContext(ctx context.Context) ([]QuotaUsage, error) {
     // ...client.GetRequiredInformation(ctx, ...)
 
     // In case we are retrieving usage for multiple resources:
